@@ -14,7 +14,7 @@ export default function PostList({ posts, remove, ...props }) {
           return (
             <CSSTransition
             key={e.id}
-            timeout={500}
+            timeout={200}
             classNames="posts"
           >
           <PostItem remove={remove} post={e}  />

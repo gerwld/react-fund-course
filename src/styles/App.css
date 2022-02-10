@@ -23,16 +23,16 @@
 }
 
 .posts-enter {
-  opacity: 0;
+  transform: translateX(-350px);
 }
 .posts-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
+  transform: translateX(0px);
+  transition: 0.2s ease-in;
 }
 .posts-exit {
-  opacity: 1;
+  transition: all 0.2s ease-in;
 }
 .posts-exit-active {
-  opacity: 0;
-  transition: opacity 500ms ease-in;
+  transform: translateX(-350px);
+  transition: 0.2s ease-in;
 }
