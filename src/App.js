@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -25,7 +25,7 @@ function App() {
     );
   };
 
-  const [select, setSelect] = useState('title');
+  const [selectedSort, setSelect] = useState('title');
   const [searchQuery,setSearchQuery] = useState('');
   
 
@@ -33,7 +33,13 @@ function App() {
     setSelect(sort);
   }
 
-  const sortedPosts = [...posts].sort((a, b) => a[select].localeCompare(b[select]));
+  const sortedPosts = useMemo(() => {
+    console.log('getsortedposts');
+    if(selectedSort) {
+      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    }
+    return posts;
+  }, [selectedSort, posts]);
 
   return (
     <div className="App">
@@ -41,7 +47,7 @@ function App() {
       <hr style={{ margin: "15px 0" }} />
       <div>
         <MyInput placeholder="Поиск..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-        <Select value={select} onChange={changeSelect} defaultValue="Сортировка по:" options={[
+        <Select value={selectedSort} onChange={changeSelect} defaultValue="Сортировка по:" options={[
           {value: 'title', name: 'По названию'},
           {value: 'body', name: 'По описанию'}
           ]} />
