@@ -3,6 +3,7 @@ import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import Select from "./components/UI/select/Select";
+import MyInput from "./components/UI/input/MyInput";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -25,23 +26,28 @@ function App() {
   };
 
   const [select, setSelect] = useState('title');
+  const [searchQuery,setSearchQuery] = useState('');
+  
+
   const changeSelect = (sort) => {
     setSelect(sort);
-    setPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])))
   }
+
+  const sortedPosts = [...posts].sort((a, b) => a[select].localeCompare(b[select]));
 
   return (
     <div className="App">
       <PostForm create={createPost} posts={posts} />
       <hr style={{ margin: "15px 0" }} />
       <div>
+        <MyInput placeholder="Поиск..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         <Select value={select} onChange={changeSelect} defaultValue="Сортировка по:" options={[
           {value: 'title', name: 'По названию'},
           {value: 'body', name: 'По описанию'}
           ]} />
       </div>
       {posts.length !== 0 ? (
-        <PostList remove={removePost} posts={posts} />
+        <PostList remove={removePost} posts={sortedPosts} />
       ) : (
         <h1 style={{ textAlign: "center" }}>No posts yet.</h1>
       )}
