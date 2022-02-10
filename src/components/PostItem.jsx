@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/App.css";
 import MyButton from './UI/button/MyButton';
 
-export default function PostItem({ post }) {
+export default function PostItem({ post, remove }) {
 
   return (
     <div className="post">
@@ -10,7 +10,7 @@ export default function PostItem({ post }) {
         <strong>{post.title}</strong>
         <div>{post.body}</div>
         <div className="post__btns">
-        <MyButton>Удалить</MyButton>
+        <MyButton onClick={() => remove(post.id)}>Удалить</MyButton>
         </div>
       </div>
     </div>
