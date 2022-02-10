@@ -1,11 +1,27 @@
-import React, { useState } from 'react'
-import PostItem from './PostItem';
+import React from "react";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import PostItem from "./PostItem";
 
-export default function PostList({posts, remove, ...props}) {
+export default function PostList({ posts, remove, ...props }) {
+  if (posts.length === 0) {
+    return <h1 style={{ textAlign: "center" }}>Posts not found.</h1>;
+  }
 
   return (
     <div>
-      {posts.map(e => {return <PostItem remove={remove} post={e} key={e.id} />})}
+      <TransitionGroup>
+        {posts.map((e) => {
+          return (
+            <CSSTransition
+            key={e.id}
+            timeout={500}
+            classNames="posts"
+          >
+          <PostItem remove={remove} post={e}  />
+          </CSSTransition>
+          );
+        })}
+      </TransitionGroup>
     </div>
-  )
+  );
 }

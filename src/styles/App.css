@@ -21,3 +21,18 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.posts-enter {
+  opacity: 0;
+}
+.posts-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.posts-exit {
+  opacity: 1;
+}
+.posts-exit-active {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
