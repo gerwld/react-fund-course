@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -10,7 +10,7 @@ import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import useFetching from "./hooks/useFetching";
 import { getPagesCount } from "./utils/pages";
-import { usePagination } from "./hooks/usePagination";
+import MyPagination from "./components/UI/pagination/MyPagination";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -24,8 +24,7 @@ function App() {
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const pagesArray = usePagination(totalPages);
+  const limit = 10;
 
   const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page);
@@ -47,17 +46,12 @@ function App() {
     );
   };
 
-  const changePage = (page) => {
-    setPage(page);
-  }
-
   useEffect(() => {
     fetchPosts();
   }, [page]);
 
   return (
     <div className="App">
-      <button onClick={fetchPosts}>Получить посты</button>
       <MyButton style={{ marginTop: "30px" }} onClick={() => setModal(true)}>
         Создать пост
       </MyButton>
@@ -70,6 +64,7 @@ function App() {
         <PostFilter filter={filter} setFilter={setFilter} />
       </div>
       {postsError && <div>Error {postsError}</div>}
+
       {isPostsLoading ? (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <Loader />
@@ -77,13 +72,12 @@ function App() {
       ) : (
         <PostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
-      <div style={{ margin: "30px 0" }}>
-        {pagesArray.map((el) => {
-          return <span key={el} 
-          onClick={() => changePage(el)}
-          className={el === page ? 'pag_active' : 'pag_el'}>{el}</span>;
-        })}
-      </div>
+
+      <MyPagination 
+        totalPages={totalPages} 
+        changePage={setPage} 
+        page={page} 
+      />
     </div>
   );
 }
