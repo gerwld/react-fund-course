@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -9,7 +9,8 @@ import { usePosts } from "./hooks/usePosts";
 import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
-import useFetching from './hooks/useFetching';
+import useFetching from "./hooks/useFetching";
+import { getPagesCount } from "./utils/pages";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -18,6 +19,12 @@ function App() {
     { id: "2k", title: "Aitle3", body: "Come text" },
     { id: "3k", title: "Citle4", body: "Lome textdfbdfb" },
   ]);
+  const [filter, setFilter] = useState({ sort: "title", query: "" });
+  const [modal, setModal] = useState(false);
+  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const createPost = (post) => {
     setPosts([...posts, post]);
@@ -32,13 +39,22 @@ function App() {
     );
   };
 
-  const [filter, setFilter] = useState({ sort: "title", query: "" });
-  const [modal, setModal] = useState(false);
-  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-  const [fetchPosts, isPostsLoading, error] = useFetching( async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
-  })
+  const getPagination = useMemo(() => {
+    let pagesArray = [''];
+    for (let i = 0; i < totalPages; i++) {
+      pagesArray.push(i + 1);
+    }
+    return pagesArray;
+  }, [totalPages])
+
+
+
+  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
+    const response = await PostService.getAll(limit, page);
+    setPosts(response.data);
+    const totalCount = response.headers["x-total-count"];
+    setTotalPages(getPagesCount(totalCount, limit));
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -58,6 +74,7 @@ function App() {
       <div>
         <PostFilter filter={filter} setFilter={setFilter} />
       </div>
+      {postsError && <div>Error {postsError}</div>}
       {isPostsLoading ? (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <Loader />
