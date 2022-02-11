@@ -7,7 +7,7 @@ import MyModal from "./components/UI/MyModal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
 import { usePosts } from "./hooks/usePosts";
 import axios from "axios";
-import PostService from './API/PostService';
+import PostService from "./API/PostService";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -32,22 +32,27 @@ function App() {
 
   const [filter, setFilter] = useState({ sort: "title", query: "" });
   const [modal, setModal] = useState(false);
-  const sortedAndSearchedPosts =  usePosts(posts, filter.sort, filter.query);
+  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  const [isPostsLoading, setPostsLoading] = useState(false);
 
   async function fetchPosts() {
-   const posts = await PostService.getAll();
-   setPosts(posts);
-   console.log(posts);
+    setPostsLoading(true);
+    const posts = await PostService.getAll();
+    setPosts(posts);
+    setPostsLoading(false);
+    console.log(posts);
   }
 
   useEffect(() => {
     fetchPosts();
-  }, [])
+  }, []);
 
   return (
     <div className="App">
       <button onClick={fetchPosts}>Получить посты</button>
-      <MyButton style={{marginTop: '30px'}} onClick={() => setModal(true)}>Создать пост</MyButton>
+      <MyButton style={{ marginTop: "30px" }} onClick={() => setModal(true)}>
+        Создать пост
+      </MyButton>
       <MyModal visible={modal} setVisible={setModal}>
         <PostForm create={createPost} posts={posts} />
       </MyModal>
@@ -56,7 +61,11 @@ function App() {
       <div>
         <PostFilter filter={filter} setFilter={setFilter} />
       </div>
-      <PostList remove={removePost} posts={sortedAndSearchedPosts} />
+      {isPostsLoading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <PostList remove={removePost} posts={sortedAndSearchedPosts} />
+      )}
     </div>
   );
 }
