@@ -6,11 +6,11 @@ import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
 import { usePosts } from "./hooks/usePosts";
-import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import useFetching from "./hooks/useFetching";
 import { getPagesCount } from "./utils/pages";
+import { usePagination } from './hooks/usePagination';
 
 function App() {
   const [posts, setPosts] = useState([
@@ -25,6 +25,16 @@ function App() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const pagesArray = usePagination(totalPages);
+
+  console.log(pagesArray);
+
+  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
+    const response = await PostService.getAll(limit, page);
+    setPosts(response.data);
+    const totalCount = response.headers["x-total-count"];
+    setTotalPages(getPagesCount(totalCount, limit));
+  });
 
   const createPost = (post) => {
     setPosts([...posts, post]);
@@ -38,23 +48,6 @@ function App() {
       })
     );
   };
-
-  const getPagination = useMemo(() => {
-    let pagesArray = [''];
-    for (let i = 0; i < totalPages; i++) {
-      pagesArray.push(i + 1);
-    }
-    return pagesArray;
-  }, [totalPages])
-
-
-
-  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
-    const response = await PostService.getAll(limit, page);
-    setPosts(response.data);
-    const totalCount = response.headers["x-total-count"];
-    setTotalPages(getPagesCount(totalCount, limit));
-  });
 
   useEffect(() => {
     fetchPosts();
