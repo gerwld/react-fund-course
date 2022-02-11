@@ -36,3 +36,24 @@
   transform: translateX(-350px);
   transition: 0.2s ease-in;
 }
+
+.pag_el {
+  padding: 8px 10px;
+  border: 1px solid teal;
+}
+
+.pag_active {
+  padding: 7px 9px;
+  border: 2px solid orange;
+  font-weight: bold;
+}
+
+.pag_el,
+.pag_active {
+  cursor: pointer;
+  user-select: none;
+}
+
+.pag_el:hover {
+  background-color: #caebd1;
+}
