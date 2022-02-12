@@ -10,9 +10,6 @@ import { rountes } from '../routes/routes';
 function AppRouter() {
   return (
     <Routes>
-      <Route path="*" element={<NotFound />} />
-
-      <Route path="/" element={<Posts />} />
       {rountes.map(route => <Route key={route.path} path={route.path} element={<route.component />} />)}
     </Routes>
   );
