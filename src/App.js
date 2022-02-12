@@ -1,19 +1,19 @@
 import React from "react";
-import { BrowserRouter, NavLink, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import About from "./components/pages/About";
 import Posts from "./components/pages/Posts";
 import './styles/App.css';
+import Navbar from './components/UI/navbar/Navbar';
+import NotFound from './components/pages/NotFound';
 
 function App() {
   return (
     <BrowserRouter>
-      <nav className="navbar">
-        <ul className="navbar_links">
-          <li><NavLink to="/posts">Posts</NavLink></li>
-          <li><NavLink to="/about">About</NavLink></li>
-        </ul>
-      </nav>
+      <Navbar />
       <Routes>
+        <Route path='*' element={<NotFound />} />
+
+        <Route path="/" element={<Posts />} />
         <Route path="/about" element={<About />} />
         <Route path="/posts" element={<Posts />} />
       </Routes>
