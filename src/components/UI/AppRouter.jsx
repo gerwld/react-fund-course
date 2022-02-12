@@ -5,6 +5,7 @@ import NotFound from "../pages/NotFound";
 import Posts from "../pages/Posts";
 import About from "../pages/About";
 import PostPage from '../PostPage';
+import { rountes } from '../routes/routes';
 
 function AppRouter() {
   return (
@@ -12,9 +13,7 @@ function AppRouter() {
       <Route path="*" element={<NotFound />} />
 
       <Route path="/" element={<Posts />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/posts" element={<Posts />} />
-      <Route path="/posts/id:id" element={<PostPage />} />
+      {rountes.map(route => <Route key={route.path} path={route.path} element={<route.component />} />)}
     </Routes>
   );
 }
