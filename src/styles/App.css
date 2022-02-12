@@ -6,7 +6,8 @@
 
 #root {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .App {
@@ -56,4 +57,23 @@
 
 .pag_el:hover {
   background-color: #caebd1;
+}
+
+.navbar {
+  height: 50px;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  background-color: lightgray;
+}
+
+.navbar_links {
+  margin-left: auto;
+  display: flex;
+  list-style: none;
+}
+
+.navbar_links li {
+  margin-right: 10px;
 }
