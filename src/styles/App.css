@@ -38,6 +38,14 @@
   transition: 0.2s ease-in;
 }
 
+.post__btns {
+  display: flex;
+}
+
+.post__btns button:nth-child(1) {
+  margin-right: 10px;
+}
+
 .pag_el {
   padding: 8px 10px;
   border: 1px solid teal;
@@ -76,4 +84,9 @@
 
 .navbar_links li {
   margin-right: 10px;
+}
+
+.comment_block {
+  border: 1px solid teal;
+  margin-top: 5px;
 }
