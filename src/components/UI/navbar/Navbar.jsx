@@ -9,7 +9,7 @@ function Navbar() {
 
   const logout = () => {
     setIsAuth(false);
-    localStorage.setItem('auth', false);
+    localStorage.removeItem('auth');
   }
   return (
         <nav className="navbar">
