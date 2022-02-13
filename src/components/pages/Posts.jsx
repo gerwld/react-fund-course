@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PostList from "../PostList";
 import MyPagination from "../UI/pagination/MyPagination";
-import './../../styles/App.css';
-import Loader from '../UI/Loader/Loader';
-import PostFilter from '../PostFilter';
-import PostForm from '../PostForm';
-import MyModal from '../UI/MyModal/MyModal';
-import MyButton from '../UI/button/MyButton';
-import { getPagesCount } from '../../utils/pages';
-import PostService from '../../API/PostService';
-import useFetching from '../../hooks/useFetching';
-import { usePosts } from '../../hooks/usePosts';
-
+import "./../../styles/App.css";
+import Loader from "../UI/Loader/Loader";
+import PostFilter from "../PostFilter";
+import PostForm from "../PostForm";
+import MyModal from "../UI/MyModal/MyModal";
+import MyButton from "../UI/button/MyButton";
+import { getPagesCount } from "../../utils/pages";
+import PostService from "../../API/PostService";
+import useFetching from "../../hooks/useFetching";
+import { usePosts } from "../../hooks/usePosts";
+import { useObserver } from "../../hooks/useObserver";
 
 function Posts() {
   const [posts, setPosts] = useState([
@@ -20,19 +20,28 @@ function Posts() {
     { id: "2k", title: "Aitle3", body: "Come text" },
     { id: "3k", title: "Citle4", body: "Lome textdfbdfb" },
   ]);
-  const [filter, setFilter] = useState({ sort: "title", query: "" });
+  const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 10;
+  const lastElement = useRef();
 
-  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
+  const [fetchPosts, isPostsLoading, postsError] = useFetching(async (limit, page) => {
     const response = await PostService.getAll(limit, page);
-    setPosts(response.data);
+    setPosts([...posts, ...response.data]);
     const totalCount = response.headers["x-total-count"];
     setTotalPages(getPagesCount(totalCount, limit));
   });
+
+  useObserver(lastElement, page < totalPages, isPostsLoading, () => {
+    setPage(page + 1);
+  });
+
+  useEffect(() => {
+    fetchPosts(limit, page);
+  }, [page]);
 
   const createPost = (post) => {
     setPosts([...posts, post]);
@@ -46,10 +55,6 @@ function Posts() {
       })
     );
   };
-
-  useEffect(() => {
-    fetchPosts();
-  }, [page]);
 
   return (
     <div className="App">
@@ -66,13 +71,13 @@ function Posts() {
       </div>
       {postsError && <div>Error {postsError}</div>}
 
-      {isPostsLoading ? (
+      {isPostsLoading && (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
           <Loader />
         </div>
-      ) : (
-        <PostList remove={removePost} posts={sortedAndSearchedPosts} />
       )}
+      <PostList remove={removePost} posts={sortedAndSearchedPosts} />
+      <div ref={lastElement} style={{ height: "20px", backgroundColor: "red" }}></div>
 
       <MyPagination totalPages={totalPages} changePage={setPage} page={page} />
     </div>
